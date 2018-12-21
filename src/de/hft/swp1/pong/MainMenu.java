@@ -1,10 +1,13 @@
 package de.hft.swp1.pong;
 
+import static de.hft.swp1.pong.Application.ROOTFRAME;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -63,27 +66,47 @@ public class MainMenu extends JPanel
         btnStartNewGame = new JButton();
         btnExit = new JButton();
         JPanel buttonPanel = new JPanel();
-        height = new JTextField();
-        width = new JTextField();
+        width = new JTextField("800", 10);
+        height = new JTextField("600", 10);
         JPanel textFieldPanel = new JPanel();
         
         setLayout(new BorderLayout());
+        
+        textFieldPanel.add(width);
+        textFieldPanel.add(height);
+        
+        add(textFieldPanel, BorderLayout.CENTER);
         
         btnStartNewGame.setText("Start New Game");
         buttonPanel.add(btnStartNewGame);
         
         btnExit.setText("Exit");
+        buttonPanel.add(btnExit);
+        
+        add(buttonPanel, BorderLayout.PAGE_END);
+        
+        // Action Listeners
         btnExit.addActionListener((ActionEvent e) -> {
             System.exit(0);
         });
-        buttonPanel.add(btnExit);
-        
-        add(buttonPanel, BorderLayout.SOUTH);
-        
-        textFieldPanel.add(height);
-        
-        textFieldPanel.add(width);
-        
-        add(textFieldPanel, BorderLayout.CENTER);
+        btnStartNewGame.addActionListener((e) -> {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(!width.getText().matches("^[0-9]{2,4}$") || !height.getText().matches("^[0-9]{2,4}$")) {
+                    JOptionPane.showMessageDialog(null, "Invalid resolution!");
+                    return;
+                }
+                Dimension dim = new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
+                InGame inGame = new InGame(dim);
+                ROOTFRAME.getContentPane().removeAll();
+                dim.setSize(dim.width+40, dim.height+40);
+                ROOTFRAME.setSize(dim);
+                ROOTFRAME.add(inGame);
+                //ROOTFRAME.repaint();
+            }
+        });
+            
+        });
     }
 }

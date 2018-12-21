@@ -1,5 +1,7 @@
 package de.hft.swp1.pong;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 
 import javax.swing.Timer;
@@ -31,9 +33,18 @@ public class Puck extends Point2D.Double
      *
      * @return
      */
-    public Puck()
+    public Puck(int width, int height)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        x = width;
+        y = height;
+        unitVector = new DirectionVector(new double [] {0.5,-1.0});
+        mover = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                move();
+            }
+        });
+        mover.setInitialDelay(500);
     }
 
     /**
@@ -46,7 +57,7 @@ public class Puck extends Point2D.Double
      */
     public void setUnitVector(double x, double y)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        unitVector.setVector(new double [] {x,y}, true);
     }
 
     /**
@@ -56,7 +67,7 @@ public class Puck extends Point2D.Double
      */
     public DirectionVector getUnitVector()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        return unitVector;
     }
 
     /**
@@ -64,7 +75,7 @@ public class Puck extends Point2D.Double
      */
     public void start()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        mover.start();
     }
 
     /**
@@ -72,7 +83,7 @@ public class Puck extends Point2D.Double
      */
     public void stop()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        mover.stop();
     }
 
     /**
@@ -80,7 +91,9 @@ public class Puck extends Point2D.Double
      */
     public void slower()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        mover.stop();
+        mover.setDelay(mover.getDelay()+1);
+        mover.start();
     }
 
     /**
@@ -88,7 +101,9 @@ public class Puck extends Point2D.Double
      */
     public void faster()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        mover.stop();
+        mover.setDelay(mover.getDelay()-1);
+        mover.start();
     }
 
     /**
@@ -99,6 +114,8 @@ public class Puck extends Point2D.Double
      */
     public void move()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        // move in direction of unitvector (update points location)
+        x = x + unitVector.getValue(1);
+        y = y + unitVector.getValue(2);
     }
 }

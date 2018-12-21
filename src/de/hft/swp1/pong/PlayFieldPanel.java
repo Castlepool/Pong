@@ -1,7 +1,11 @@
 package de.hft.swp1.pong;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.HashSet;
 
@@ -37,7 +41,9 @@ public class PlayFieldPanel extends JPanel
      */
     public PlayFieldPanel(Dimension playFieldSize, HashSet<PongLine> lines, Puck puck)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        this.lines = lines;
+        this.puck = puck;
+        initComponents(playFieldSize);
     }
 
     /**
@@ -47,7 +53,7 @@ public class PlayFieldPanel extends JPanel
      */
     private void initComponents(Dimension playFieldSize)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        setPreferredSize(playFieldSize);
     }
 
     /**
@@ -59,6 +65,19 @@ public class PlayFieldPanel extends JPanel
      */
     public void paintComponent(Graphics gc)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        //super.paintComponent(gc);
+        Graphics2D g2d = (Graphics2D) gc.create();
+        g2d.setStroke(new BasicStroke(5));
+        g2d.setColor(Color.BLACK);
+        Dimension dim = getSize();
+        g2d.fillRect(0, 0, dim.width, dim.height);
+        g2d.setColor(Color.ORANGE);
+        for(PongLine line : lines){
+            System.out.println(line.x1);
+            g2d.draw(line);
+        }
+        g2d.draw(new Ellipse2D.Double(puck.x - puck.DIAMETER/2, 
+                puck.y - puck.DIAMETER/2, puck.DIAMETER, puck.DIAMETER));
+        g2d.dispose();
     }
 }

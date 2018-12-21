@@ -17,7 +17,10 @@ public class DirectionVector
      */
     public DirectionVector(int dimensions)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        values = new double [dimensions];
+        for(int i = 0; i < dimensions; i++){
+            values[i] = 1;
+        }
     }
 
     /**
@@ -28,7 +31,10 @@ public class DirectionVector
      */
     public DirectionVector(double[] values)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        this.values = new double [values.length];
+        for(int i = 0; i < values.length; i++){
+            this.values[i] = values[i];
+        }
     }
 
     /**
@@ -39,7 +45,11 @@ public class DirectionVector
      */
     public double scalar(DirectionVector vc)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        double scalar = 0;
+        for(int i = 0; i < values.length; i++){
+            scalar += values[i] * vc.values[i];
+        }
+        return scalar;
     }
 
     /**
@@ -49,7 +59,11 @@ public class DirectionVector
      */
     public double length()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        double sum = 0;
+        for(int i = 0; i < values.length; i++){
+            sum += Math.pow(values[i], 2.0);
+        }
+        return Math.sqrt(sum);
     }
 
     /**
@@ -60,7 +74,7 @@ public class DirectionVector
      */
     public double getValue(int dimension)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        return values[dimension-1];
     }
 
     /**
@@ -71,7 +85,8 @@ public class DirectionVector
      */
     public void setVector(double[] values, boolean normalize)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        this.values = values;
+        if(normalize) normalize();
     }
 
     /**
@@ -80,6 +95,9 @@ public class DirectionVector
      */
     public void normalize()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        double length = length();
+        for(int i = 0; i < values.length; i++){
+            values[i] = values[i] / length;
+        }
     }
 }

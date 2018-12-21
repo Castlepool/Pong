@@ -43,7 +43,14 @@ public class PongLine extends Line2D.Double
      */
     public PongLine(double startX, double startY, double destX, double destY, Side position)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        // x1, x2 etc. are fields of Line2D.Double, from which we inherit them
+        x1 = startX;
+        y1 = startY;
+        x2 = destX;
+        y2 = destY;
+        DirectionVector d = new DirectionVector(new double [] {x2-x1, y2-y1});
+        d.normalize();
+        dVector = d;
     }
 
     /**
@@ -56,19 +63,20 @@ public class PongLine extends Line2D.Double
      */
     public void setNewPuckDistance(double distance)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        puckDistanceBefore = puckDistanceCurrent;
+        puckDistanceCurrent = distance;
     }
 
     /**
      * Operation movesToMe.<br />
      * 
-     * checks with the last to stored distances, if the puck is moving to the line
+     * checks with the last two stored distances, wether the puck is moving towards the line
      *
      * @return boolean
      */
     public boolean movesToMe()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        return (puckDistanceCurrent < puckDistanceBefore) ? true : false;
     }
 
     /**
@@ -78,6 +86,6 @@ public class PongLine extends Line2D.Double
      */
     public DirectionVector getDirectionVector()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        return dVector;
     }
 }

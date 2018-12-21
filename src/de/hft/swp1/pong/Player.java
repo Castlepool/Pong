@@ -1,5 +1,7 @@
 package de.hft.swp1.pong;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 public class Player extends PongLine
@@ -7,9 +9,9 @@ public class Player extends PongLine
     /** Attributes */
 
     /**
-     * constant speed value for the player movage
+     * speed value for the player movage
      */
-    private final int SPEED = 5;
+    private final int SPEED = 20;
 
     /**
      * Timer that moves the player
@@ -31,8 +33,11 @@ public class Player extends PongLine
     public Player(double startX, double startY, double destX, double destY, Side position)
     {
         super(startX, startY, destX, destY, position);
-
-        throw new UnsupportedOperationException("not yet implemented");
+        mover = new Timer(30, (ActionEvent e) -> {
+            if(direction == Side.LEFT) this.setLine(x1-SPEED, y1, x2-SPEED, y2);
+            else this.setLine(x1+SPEED, y1, x2+SPEED, y2);
+        });
+        mover.setInitialDelay(1);
     }
 
     /**
@@ -41,7 +46,10 @@ public class Player extends PongLine
      */
     public void startMove(Side direction)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        if(!mover.isRunning()){
+            this.direction = direction;
+            mover.start();
+        }
     }
 
     /**
@@ -49,6 +57,17 @@ public class Player extends PongLine
      */
     public void stopMove()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        if(mover.isRunning()){
+            mover.stop();
+        }
     }
+    
+    /**
+     * stops to move the player
+     */
+    public boolean isMoving()
+    {
+        return mover.isRunning();
+    }
+    
 }

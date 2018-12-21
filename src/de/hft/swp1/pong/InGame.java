@@ -1,10 +1,16 @@
 package de.hft.swp1.pong;
 
 import java.awt.Dimension;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.HashSet;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 /**
@@ -49,7 +55,9 @@ public class InGame extends JPanel
      * panel the content is shown on
      */
     private PlayFieldPanel playground;
-
+    
+    KeyboardFocusManager kfm;
+    
     /**
      * Operation InGame
      *
@@ -58,7 +66,32 @@ public class InGame extends JPanel
      */
     public InGame(Dimension playFieldSize)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        kfm.addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
+                int type = ks.getKeyEventType();
+                if(type == KeyEvent.KEY_PRESSED) {
+                    if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_LEFT, 0))){
+                        player.startMove(Side.LEFT);
+                    } else if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_RIGHT, 0))){
+                        player.startMove(Side.RIGHT);
+                    }
+                    return true;
+                }
+                if(type == KeyEvent.KEY_RELEASED) {
+                    player.stopMove();
+                    return true;
+                }
+                return false;
+            }
+        });
+        
+        initPlayFieldPanel(playFieldSize);
+        initComponents();
+        refresher.start();
+        puck.start();
     }
 
     /**
@@ -68,7 +101,17 @@ public class InGame extends JPanel
      */
     public void initPlayFieldPanel(Dimension playFieldSize)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        borders = new HashSet<>();
+        int width = playFieldSize.width;
+        int height = playFieldSize.height;
+        PongLine bLeft = new PongLine(0, height, width/2, 0, Side.RIGHT);
+        PongLine bRight = new PongLine(width/2, 0, width, height, Side.RIGHT);
+        player = new Player(width/2-40, height-20, width/2+40, height-20, Side.BOTTOM);
+        borders.add(bLeft);
+        borders.add(bRight);
+        borders.add(player);
+        puck = new Puck(width/2, height/2);
+        playground = new PlayFieldPanel(playFieldSize, borders, puck);
     }
 
     /**
@@ -77,7 +120,15 @@ public class InGame extends JPanel
      */
     private void initComponents()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        add(playground);
+        refresher = new Timer(20, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkForCollission();
+                //movePlayer(4);
+                playground.repaint();
+            }
+        });
     }
 
     /**
@@ -112,11 +163,11 @@ public class InGame extends JPanel
      * Operation to movePlayer.<br />
      * get's called from the Timer that moves the player
      *
-     * @param moveMent - value the puck should be moved
+     * @param movement - value the puck should be moved
      */
-    private void movePlayer(int moveMent)
+    private void movePlayer(int movement)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        //player.startMove(Side.LEFT);
     }
 
     /**
@@ -127,7 +178,13 @@ public class InGame extends JPanel
      */
     private void checkForCollission()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        borders.forEach( line -> {
+            double dist = calcDistance(line);
+            line.setNewPuckDistance(dist);
+            if(dist < line.WIDTH && line.movesToMe()){
+                changeDirection(line);
+            }
+        });
     }
 
     /**
@@ -139,7 +196,7 @@ public class InGame extends JPanel
      */
     private double calcDistance(PongLine line)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        return line.ptLineDist(puck);
     }
 
     /**
@@ -151,7 +208,7 @@ public class InGame extends JPanel
      */
     private void changeDirection(PongLine line)
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
     }
 
     /**
