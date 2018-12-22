@@ -14,7 +14,7 @@ public class Puck extends Point2D.Double
     /**
      * diameter the puck optically has
      */
-    public final int DIAMETER = 10;
+    public final int DIAMETER = 20;
 
     /**
      * timer that moves the puck in it's vectors direction
@@ -37,8 +37,8 @@ public class Puck extends Point2D.Double
     {
         x = width;
         y = height;
-        unitVector = new DirectionVector(new double [] {0.5,-1.0});
-        mover = new Timer(1, new ActionListener() {
+        unitVector = new DirectionVector(new double [] {-Math.random(),-Math.random()});
+        mover = new Timer(30, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 move();
@@ -91,9 +91,9 @@ public class Puck extends Point2D.Double
      */
     public void slower()
     {
-        mover.stop();
-        mover.setDelay(mover.getDelay()+1);
-        mover.start();
+        if(mover.getDelay() < 60){
+            mover.setDelay(mover.getDelay()+1);
+        }
     }
 
     /**
@@ -101,9 +101,9 @@ public class Puck extends Point2D.Double
      */
     public void faster()
     {
-        mover.stop();
-        mover.setDelay(mover.getDelay()-1);
-        mover.start();
+        if(mover.getDelay() > 8){
+            mover.setDelay(mover.getDelay()-1);
+        }
     }
 
     /**
@@ -115,7 +115,7 @@ public class Puck extends Point2D.Double
     public void move()
     {
         // move in direction of unitvector (update points location)
-        x = x + unitVector.getValue(1);
-        y = y + unitVector.getValue(2);
+        x = x + unitVector.getValue(1)*10;
+        y = y + unitVector.getValue(2)*10;
     }
 }

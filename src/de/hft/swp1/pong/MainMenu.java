@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 /**
  * First JPanel that get's visible, asking for width and height of playfield.

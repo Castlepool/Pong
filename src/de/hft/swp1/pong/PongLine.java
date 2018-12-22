@@ -6,7 +6,7 @@ public class PongLine extends Line2D.Double
 
 {
     /** Attributes */
-    public final float WIDTH = 3;
+    public final float WIDTH = 30;
 
     /**
      * puck distance after latest calculation

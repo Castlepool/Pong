@@ -73,7 +73,6 @@ public class PlayFieldPanel extends JPanel
         g2d.fillRect(0, 0, dim.width, dim.height);
         g2d.setColor(Color.ORANGE);
         for(PongLine line : lines){
-            System.out.println(line.x1);
             g2d.draw(line);
         }
         g2d.draw(new Ellipse2D.Double(puck.x - puck.DIAMETER/2, 

@@ -121,11 +121,10 @@ public class InGame extends JPanel
     private void initComponents()
     {
         add(playground);
-        refresher = new Timer(20, new ActionListener() {
+        refresher = new Timer(6, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 checkForCollission();
-                //movePlayer(4);
                 playground.repaint();
             }
         });
@@ -183,6 +182,7 @@ public class InGame extends JPanel
             line.setNewPuckDistance(dist);
             if(dist < line.WIDTH && line.movesToMe()){
                 changeDirection(line);
+                puck.faster();
             }
         });
     }
@@ -208,7 +208,17 @@ public class InGame extends JPanel
      */
     private void changeDirection(PongLine line)
     {
-        puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
+        DirectionVector lineVector = line.getDirectionVector();
+        DirectionVector puckVector = puck.getUnitVector();
+        
+        double angle = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
+        double rotateAngle = 2*Math.PI - 2*angle;
+        
+        double xNew = puck.x * Math.cos(rotateAngle) - puck.y * Math.sin(rotateAngle);
+        double yNew = puck.x * Math.sin(rotateAngle) + puck.y * Math.cos(rotateAngle);
+
+        puck.setUnitVector(xNew, yNew);
+        //puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
     }
 
     /**
