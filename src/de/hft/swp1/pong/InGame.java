@@ -113,7 +113,7 @@ public class InGame extends JPanel
         borders.add(bLeft);
         borders.add(bRight);
         borders.add(player);
-        puck = new Puck(width/2, height/2);
+        puck = new Puck(width/2, height/2, (int) (height*0.035));
         playground = new PlayFieldPanel(playFieldSize, borders, puck);
         score = 0;
     }

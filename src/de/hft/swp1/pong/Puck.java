@@ -14,7 +14,7 @@ public class Puck extends Point2D.Double
     /**
      * diameter the puck optically has
      */
-    public final int DIAMETER = 20;
+    public int diameter = 20;
 
     /**
      * timer that moves the puck in it's vectors direction
@@ -33,10 +33,11 @@ public class Puck extends Point2D.Double
      *
      * @return
      */
-    public Puck(int width, int height)
+    public Puck(int width, int height, int diameter)
     {
         x = width;
         y = height;
+        this.diameter = diameter;
         //unitVector = new DirectionVector(new double [] {-Math.random(),-Math.random()});
         unitVector = new DirectionVector(new double [] {-1.0,-0.55});
         mover = new Timer(30, new ActionListener() {

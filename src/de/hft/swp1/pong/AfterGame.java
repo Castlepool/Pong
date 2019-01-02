@@ -1,9 +1,7 @@
 package de.hft.swp1.pong;
 
+import static de.hft.swp1.pong.Application.ROOTFRAME;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.LayoutManager;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,13 +26,15 @@ public class AfterGame extends JPanel
     /**
      * adding the score with the entered Player name to the list and show it
      */
-    private JButton next;
+    private JButton saveScore;
 
     /**
      * don't add the score to the list, just show it
      */
-    private JButton skip;
-
+    private JButton tryAgain;
+    
+    private static Highscores highscoresScrollPane;
+    
     /**
      * Operation AfterGame
      *
@@ -53,8 +53,8 @@ public class AfterGame extends JPanel
      */
     private void initComponents()
     {
-        next = new JButton();
-        skip = new JButton();
+        saveScore = new JButton();
+        tryAgain = new JButton();
         JPanel buttonPanel = new JPanel();
         player = new JTextField("Name", 10);
         score = new JTextField("", 10);
@@ -66,18 +66,24 @@ public class AfterGame extends JPanel
         textFieldPanel.add(player);
         textFieldPanel.add(score);
         
-        add(textFieldPanel, BorderLayout.CENTER);
+        add(textFieldPanel, BorderLayout.PAGE_START);
         
-        next.setText("Next");
-        buttonPanel.add(next);
+        saveScore.setText("Save Score");
+        buttonPanel.add(saveScore);
         
-        skip.setText("Skip");
-        buttonPanel.add(skip);
+        tryAgain.setText("Try Again");
+        buttonPanel.add(tryAgain);
         
         add(buttonPanel, BorderLayout.PAGE_END);
         
+        // Highscores-Table
+        if(highscoresScrollPane == null){
+            highscoresScrollPane = new Highscores();
+        }
+        add(highscoresScrollPane, BorderLayout.CENTER);
+        
         // Action Listeners
-        skip.addActionListener( e -> {
+        tryAgain.addActionListener( e -> {
         java.awt.EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -86,9 +92,17 @@ public class AfterGame extends JPanel
             });
         });
         
-        next.addActionListener( e -> {
+        saveScore.addActionListener( e -> {
             Highscore highscore = new Highscore(player.getText(), Integer.valueOf(score.getText()));
-            
+            highscoresScrollPane.addHighscore(highscore);
+            updateTable();
         });
+    }
+    
+    private void updateTable(){
+        add(highscoresScrollPane, BorderLayout.CENTER);
+        saveScore.setVisible(false);
+        ROOTFRAME.revalidate();
+        ROOTFRAME.repaint();
     }
 }

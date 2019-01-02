@@ -3,6 +3,7 @@ package de.hft.swp1.pong;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
@@ -75,9 +76,11 @@ public class PlayFieldPanel extends JPanel
         for(PongLine line : lines){
             g2d.draw(line);
         }
-        g2d.draw(new Ellipse2D.Double(puck.x - puck.DIAMETER/2, 
-                puck.y - puck.DIAMETER/2, puck.DIAMETER, puck.DIAMETER));
-        g2d.drawString(String.valueOf(InGame.score), getPreferredSize().width-200, 80);
+        g2d.fill(new Ellipse2D.Double(puck.x - puck.diameter/2, 
+                puck.y - puck.diameter/2, puck.diameter, puck.diameter));
+        g2d.setFont(new Font("Monospaced", 0, (int) (dim.width*0.06)));
+        int margin = (int) (dim.width*0.1);
+        g2d.drawString(String.valueOf(InGame.score), dim.width - margin, margin);
         g2d.dispose();
     }
 }
