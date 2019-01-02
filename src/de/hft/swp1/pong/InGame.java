@@ -1,5 +1,6 @@
 package de.hft.swp1.pong;
 
+import static de.hft.swp1.pong.Application.ROOTFRAME;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -30,7 +31,7 @@ public class InGame extends JPanel
     /**
      * textfield showing the current score during ingame
      */
-    private JTextField score;
+    protected static int score;
 
     /**
      * timer to redraw the picture
@@ -67,6 +68,7 @@ public class InGame extends JPanel
     public InGame(Dimension playFieldSize)
     {
         kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        // "Dispatcher" auf Deutsch: Verteiler
         kfm.addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
@@ -104,14 +106,16 @@ public class InGame extends JPanel
         borders = new HashSet<>();
         int width = playFieldSize.width;
         int height = playFieldSize.height;
+        System.out.println(width + " " + height);
         PongLine bLeft = new PongLine(0, height, width/2, 0, Side.RIGHT);
         PongLine bRight = new PongLine(width/2, 0, width, height, Side.RIGHT);
-        player = new Player(width/2-40, height-20, width/2+40, height-20, Side.BOTTOM);
+        player = new Player(width/2-40, height-60, width/2+40, height-60, Side.BOTTOM);
         borders.add(bLeft);
         borders.add(bRight);
         borders.add(player);
         puck = new Puck(width/2, height/2);
         playground = new PlayFieldPanel(playFieldSize, borders, puck);
+        score = 0;
     }
 
     /**
@@ -125,7 +129,15 @@ public class InGame extends JPanel
             @Override
             public void actionPerformed(ActionEvent e) {
                 checkForCollission();
+                if(puck.x < 0 ||
+                        puck.x > playground.getPreferredSize().width ||
+                        puck.y < 0 ||
+                        puck.y > playground.getPreferredSize().height){
+                    System.out.println("Puck out of Playground!");
+                    exitIngame();
+                } else{
                 playground.repaint();
+                }
             }
         });
     }
@@ -180,9 +192,12 @@ public class InGame extends JPanel
         borders.forEach( line -> {
             double dist = calcDistance(line);
             line.setNewPuckDistance(dist);
+            System.out.println("Moves to me: " + line.movesToMe());
             if(dist < line.WIDTH && line.movesToMe()){
                 changeDirection(line);
                 puck.faster();
+                score++;
+                return;
             }
         });
     }
@@ -218,6 +233,8 @@ public class InGame extends JPanel
         double yNew = puck.x * Math.sin(rotateAngle) + puck.y * Math.cos(rotateAngle);
 
         puck.setUnitVector(xNew, yNew);
+        
+        System.out.println("Schnittwinkel: " + angle);
         //puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
     }
 
@@ -230,6 +247,14 @@ public class InGame extends JPanel
      */
     private void exitIngame()
     {
-        throw new UnsupportedOperationException("not yet implemented");
+        puck.stop();
+        player.stopMove();
+        refresher.stop();
+        AfterGame afterGame = new AfterGame(score);
+        ROOTFRAME.getContentPane().removeAll();
+        ROOTFRAME.remove(playground);
+        ROOTFRAME.add(afterGame);
+        ROOTFRAME.revalidate();
+        ROOTFRAME.repaint();
     }
 }

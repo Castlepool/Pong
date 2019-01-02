@@ -77,6 +77,7 @@ public class PlayFieldPanel extends JPanel
         }
         g2d.draw(new Ellipse2D.Double(puck.x - puck.DIAMETER/2, 
                 puck.y - puck.DIAMETER/2, puck.DIAMETER, puck.DIAMETER));
+        g2d.drawString(String.valueOf(InGame.score), getPreferredSize().width-200, 80);
         g2d.dispose();
     }
 }

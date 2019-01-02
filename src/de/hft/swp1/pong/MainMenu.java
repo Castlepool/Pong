@@ -99,15 +99,19 @@ public class MainMenu extends JPanel
                     return;
                 }
                 Dimension dim = new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
-                InGame inGame = new InGame(dim);
-                ROOTFRAME.getContentPane().removeAll();
-                dim.setSize(dim.width+40, dim.height+40);
-                ROOTFRAME.setSize(dim);
-                ROOTFRAME.add(inGame);
-                //ROOTFRAME.repaint();
+                startNewGame(dim);
             }
+            });
         });
-            
-        });
+    }
+    
+    public static void startNewGame(Dimension dim){
+        InGame inGame = new InGame(dim);
+        ROOTFRAME.getContentPane().removeAll();
+        dim.setSize(dim.width, dim.height);
+        ROOTFRAME.setSize(dim);
+        ROOTFRAME.add(inGame);
+        ROOTFRAME.revalidate();
+        ROOTFRAME.repaint();
     }
 }

@@ -37,7 +37,8 @@ public class Puck extends Point2D.Double
     {
         x = width;
         y = height;
-        unitVector = new DirectionVector(new double [] {-Math.random(),-Math.random()});
+        //unitVector = new DirectionVector(new double [] {-Math.random(),-Math.random()});
+        unitVector = new DirectionVector(new double [] {-1.0,-0.55});
         mover = new Timer(30, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
