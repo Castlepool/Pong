@@ -84,12 +84,7 @@ public class AfterGame extends JPanel
         
         // Action Listeners
         tryAgain.addActionListener( e -> {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    MainMenu.startNewGame(Application.ROOTFRAME.getSize());
-                }
-            });
+            MainMenu.startNewGame(Application.ROOTFRAME.getSize());
         });
         
         saveScore.addActionListener( e -> {

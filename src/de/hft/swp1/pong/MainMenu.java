@@ -91,24 +91,18 @@ public class MainMenu extends JPanel
             System.exit(0);
         });
         btnStartNewGame.addActionListener((e) -> {
-            java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if(!width.getText().matches("^[0-9]{2,4}$") || !height.getText().matches("^[0-9]{2,4}$")) {
-                    JOptionPane.showMessageDialog(null, "Invalid resolution!");
-                    return;
-                }
-                Dimension dim = new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
-                startNewGame(dim);
+            if(!width.getText().matches("^[0-9]{2,4}$") || !height.getText().matches("^[0-9]{2,4}$")) {
+                JOptionPane.showMessageDialog(null, "Invalid resolution!");
+                return;
             }
-            });
+            Dimension dim = new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
+            startNewGame(dim);
         });
     }
     
     public static void startNewGame(Dimension dim){
         InGame inGame = new InGame(dim);
         ROOTFRAME.getContentPane().removeAll();
-        dim.setSize(dim.width, dim.height);
         ROOTFRAME.setSize(dim);
         ROOTFRAME.add(inGame);
         ROOTFRAME.revalidate();

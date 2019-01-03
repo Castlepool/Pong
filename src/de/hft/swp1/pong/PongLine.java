@@ -51,6 +51,7 @@ public class PongLine extends Line2D.Double
         DirectionVector d = new DirectionVector(new double [] {x2-x1, y2-y1});
         d.normalize();
         dVector = d;
+        inside = position;
     }
 
     /**

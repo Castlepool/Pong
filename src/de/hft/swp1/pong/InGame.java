@@ -7,6 +7,8 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 
 import javax.swing.JPanel;
@@ -72,19 +74,21 @@ public class InGame extends JPanel
         kfm.addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
-                int type = ks.getKeyEventType();
-                if(type == KeyEvent.KEY_PRESSED) {
-                    if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_LEFT, 0))){
-                        player.startMove(Side.LEFT);
-                    } else if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_RIGHT, 0))){
-                        player.startMove(Side.RIGHT);
+                if(refresher.isRunning()){
+                    KeyStroke ks = KeyStroke.getKeyStrokeForEvent(e);
+                    int type = ks.getKeyEventType();
+                    if(type == KeyEvent.KEY_PRESSED) {
+                        if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_LEFT, 0))){
+                            player.startMove(Side.LEFT);
+                        } else if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_RIGHT, 0))){
+                            player.startMove(Side.RIGHT);
+                        }
+                        return true;
                     }
-                    return true;
-                }
-                if(type == KeyEvent.KEY_RELEASED) {
-                    player.stopMove();
-                    return true;
+                    if(type == KeyEvent.KEY_RELEASED) {
+                        player.stopMove();
+                        return true;
+                    } 
                 }
                 return false;
             }
@@ -129,6 +133,7 @@ public class InGame extends JPanel
             @Override
             public void actionPerformed(ActionEvent e) {
                 checkForCollission();
+                // stop if puck out of playground
                 if(puck.x < 0 ||
                         puck.x > playground.getPreferredSize().width ||
                         puck.y < 0 ||
@@ -136,7 +141,7 @@ public class InGame extends JPanel
                     System.out.println("Puck out of Playground!");
                     exitIngame();
                 } else{
-                playground.repaint();
+                    playground.repaint();
                 }
             }
         });
@@ -192,8 +197,8 @@ public class InGame extends JPanel
         borders.forEach( line -> {
             double dist = calcDistance(line);
             line.setNewPuckDistance(dist);
-            System.out.println("Moves to me: " + line.movesToMe());
             if(dist < line.WIDTH && line.movesToMe()){
+                System.out.println("Moves to me: " + line.movesToMe());
                 changeDirection(line);
                 puck.faster();
                 score++;
@@ -234,7 +239,11 @@ public class InGame extends JPanel
 
         puck.setUnitVector(xNew, yNew);
         
-        System.out.println("Schnittwinkel: " + angle);
+        double newAngle = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
+        System.out.println("-------------------------");
+        System.out.println("Time: " + Calendar.getInstance().get(Calendar.MILLISECOND));
+        System.out.println("Schnittwinkel: " + String.format( "%.2f", angle/Math.PI) + "\u03C0" 
+            + "\nNeuer Schnittwinkelinkel: " + String.format( "%.2f", newAngle/Math.PI) + "\u03C0");
         //puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
     }
 
@@ -252,7 +261,7 @@ public class InGame extends JPanel
         refresher.stop();
         AfterGame afterGame = new AfterGame(score);
         ROOTFRAME.getContentPane().removeAll();
-        ROOTFRAME.remove(playground);
+        //ROOTFRAME.remove(playground);
         ROOTFRAME.add(afterGame);
         ROOTFRAME.revalidate();
         ROOTFRAME.repaint();

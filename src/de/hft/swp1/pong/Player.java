@@ -34,8 +34,13 @@ public class Player extends PongLine
     {
         super(startX, startY, destX, destY, position);
         mover = new Timer(30, (ActionEvent e) -> {
-            if(direction == Side.LEFT) this.setLine(x1-SPEED, y1, x2-SPEED, y2);
-            else this.setLine(x1+SPEED, y1, x2+SPEED, y2);
+            System.out.println("x1: " + x1 + " SPEED: " + SPEED);
+            if(direction == Side.LEFT && x1 > 40) {
+                this.setLine(x1-SPEED, y1, x2-SPEED, y2);
+            }
+            else if(direction == Side.RIGHT && x2 < Application.ROOTFRAME.getSize().width-40) {
+                this.setLine(x1+SPEED, y1, x2+SPEED, y2);
+            }
         });
         mover.setInitialDelay(1);
     }
