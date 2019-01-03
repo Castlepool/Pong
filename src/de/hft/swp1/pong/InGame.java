@@ -111,9 +111,9 @@ public class InGame extends JPanel
         int width = playFieldSize.width;
         int height = playFieldSize.height;
         System.out.println(width + " " + height);
-        PongLine bLeft = new PongLine(0, height, width/2, 0, Side.RIGHT);
-        PongLine bRight = new PongLine(width/2, 0, width, height, Side.RIGHT);
-        player = new Player(width/2-40, height-60, width/2+40, height-60, Side.BOTTOM);
+        PongLine bLeft = new PongLine(0, height, width/2, 0, Side.RIGHT, "border_Left");
+        PongLine bRight = new PongLine(width/2, 0, width, height, Side.RIGHT, "border_RIGHT");
+        player = new Player(width/2+40, height-60, width/2-40, height-60, Side.RIGHT, "player");
         borders.add(bLeft);
         borders.add(bRight);
         borders.add(player);
@@ -129,9 +129,15 @@ public class InGame extends JPanel
     private void initComponents()
     {
         add(playground);
-        refresher = new Timer(6, new ActionListener() {
+        refresher = new Timer(14, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Update distances to puck
+                borders.forEach( line -> {
+                    double dist = calcDistance(line);
+                    line.setNewPuckDistance(dist);
+                });
+                // react to collision
                 checkForCollission();
                 // stop if puck out of playground
                 if(puck.x < 0 ||
@@ -195,9 +201,7 @@ public class InGame extends JPanel
     private void checkForCollission()
     {
         borders.forEach( line -> {
-            double dist = calcDistance(line);
-            line.setNewPuckDistance(dist);
-            if(dist < line.WIDTH && line.movesToMe()){
+            if(line.puckDistanceCurrent < line.WIDTH && line.movesToMe()){
                 System.out.println("Moves to me: " + line.movesToMe());
                 changeDirection(line);
                 puck.faster();
@@ -231,19 +235,30 @@ public class InGame extends JPanel
         DirectionVector lineVector = line.getDirectionVector();
         DirectionVector puckVector = puck.getUnitVector();
         
-        double angle = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
-        double rotateAngle = 2*Math.PI - 2*angle;
+        double angleIncidence = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
+        //if(angle > Math.PI/2) angle = Math.PI - angle;
+        //double rotateAngle = -(Math.PI + 2*angle);
+        double rotationAngle = 2*angleIncidence;
+        if(angleIncidence > Math.PI/2) {
+            angleIncidence = Math.PI - angleIncidence;
+            rotationAngle = -2*angleIncidence;
+        }
         
-        double xNew = puck.x * Math.cos(rotateAngle) - puck.y * Math.sin(rotateAngle);
-        double yNew = puck.x * Math.sin(rotateAngle) + puck.y * Math.cos(rotateAngle);
+        double xNew = puck.x * Math.cos(rotationAngle) - puck.y * Math.sin(rotationAngle);
+        double yNew = puck.x * Math.sin(rotationAngle) + puck.y * Math.cos(rotationAngle);
 
         puck.setUnitVector(xNew, yNew);
+        puck.getUnitVector().normalize();
         
-        double newAngle = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
+        double angleReflection = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
+        if(angleReflection > Math.PI/2) {
+            angleReflection = Math.PI - angleReflection;
+        }
         System.out.println("-------------------------");
-        System.out.println("Time: " + Calendar.getInstance().get(Calendar.MILLISECOND));
-        System.out.println("Schnittwinkel: " + String.format( "%.2f", angle/Math.PI) + "\u03C0" 
-            + "\nNeuer Schnittwinkelinkel: " + String.format( "%.2f", newAngle/Math.PI) + "\u03C0");
+        System.out.println("Line: " + line.name);
+        System.out.println("Time: " + Calendar.getInstance().get(Calendar.SECOND) + ":" + Calendar.getInstance().get(Calendar.MILLISECOND));
+        System.out.println("Angle of incidence (Einfallswinkel): " + String.format( "%.2f", angleIncidence/Math.PI) + "\u03C0" 
+            + "\nAngle of reflection (Ausfallswinkel): " + String.format( "%.2f", angleReflection/Math.PI) + "\u03C0");
         //puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
     }
 

@@ -40,7 +40,8 @@ public class Puck extends Point2D.Double
         this.diameter = diameter;
         unitVector = new DirectionVector(new double [] {-Math.random(),-Math.random()});
         //unitVector = new DirectionVector(new double [] {-1.0,-0.55});
-        mover = new Timer(30, new ActionListener() {
+        unitVector.normalize();
+        mover = new Timer(14, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 move();
@@ -103,9 +104,9 @@ public class Puck extends Point2D.Double
      */
     public void faster()
     {
-        if(mover.getDelay() > 8){
-            mover.setDelay(mover.getDelay()-1);
-        }
+//        if(mover.getDelay() > 8){
+//            mover.setDelay(mover.getDelay()-1);
+//        }
     }
 
     /**

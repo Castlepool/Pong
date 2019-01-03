@@ -30,9 +30,9 @@ public class Player extends PongLine
      * @param destY
      * @param position
      */
-    public Player(double startX, double startY, double destX, double destY, Side position)
+    public Player(double startX, double startY, double destX, double destY, Side position, String name)
     {
-        super(startX, startY, destX, destY, position);
+        super(startX, startY, destX, destY, position, name);
         mover = new Timer(30, (ActionEvent e) -> {
             System.out.println("x1: " + x1 + " SPEED: " + SPEED);
             if(direction == Side.LEFT && x1 > 40) {

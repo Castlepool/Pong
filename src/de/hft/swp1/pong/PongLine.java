@@ -6,12 +6,12 @@ public class PongLine extends Line2D.Double
 
 {
     /** Attributes */
-    public final float WIDTH = 30;
+    public final float WIDTH = 20;
 
     /**
      * puck distance after latest calculation
      */
-    private double puckDistanceCurrent;
+    protected double puckDistanceCurrent;
 
     /**
      * puck distance of second last calculation
@@ -30,7 +30,9 @@ public class PongLine extends Line2D.Double
      * of the playfield
      */
     private Side inside;
-
+    
+    
+    public String name;
     /**
      * Operation PongLine
      *
@@ -41,7 +43,7 @@ public class PongLine extends Line2D.Double
      * @param position - depending on the direction vector the inside
      * @return
      */
-    public PongLine(double startX, double startY, double destX, double destY, Side position)
+    public PongLine(double startX, double startY, double destX, double destY, Side position, String name)
     {
         // x1, x2 etc. are fields of Line2D.Double, from which we inherit them
         x1 = startX;
@@ -52,6 +54,7 @@ public class PongLine extends Line2D.Double
         d.normalize();
         dVector = d;
         inside = position;
+        this.name = name;
     }
 
     /**
