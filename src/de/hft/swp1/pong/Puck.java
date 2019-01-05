@@ -61,6 +61,7 @@ public class Puck extends Point2D.Double
     public void setUnitVector(double x, double y)
     {
         unitVector.setVector(new double [] {x,y}, true);
+        unitVector.normalize();
     }
 
     /**
@@ -118,7 +119,7 @@ public class Puck extends Point2D.Double
     public void move()
     {
         // move in direction of unitvector (update points location)
-        x = x + unitVector.getValue(1)*10;
-        y = y + unitVector.getValue(2)*10;
+        x = x + unitVector.getValue(1)*5;
+        y = y + unitVector.getValue(2)*5;
     }
 }

@@ -100,4 +100,16 @@ public class DirectionVector
             values[i] = values[i] / length;
         }
     }
+    
+    /**
+     * Operation getNormal
+     *
+     */
+    public static DirectionVector getNormal(DirectionVector d)
+    {
+        double slopePrevious = d.getValue(2)/d.getValue(1);
+        double slopeNew = -1/(slopePrevious);
+        DirectionVector normal = new DirectionVector(new double [] {1,slopeNew});
+        return normal;
+    }
 }

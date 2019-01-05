@@ -7,9 +7,11 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Line2D;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -200,7 +202,8 @@ public class InGame extends JPanel
      */
     private void checkForCollission()
     {
-        borders.forEach( line -> {
+        for (Iterator<PongLine> iterator = borders.iterator(); iterator.hasNext();) {
+            PongLine line = iterator.next();
             if(line.puckDistanceCurrent < line.WIDTH && line.movesToMe()){
                 System.out.println("Moves to me: " + line.movesToMe());
                 changeDirection(line);
@@ -208,7 +211,7 @@ public class InGame extends JPanel
                 score++;
                 return;
             }
-        });
+        }
     }
 
     /**
@@ -232,9 +235,12 @@ public class InGame extends JPanel
      */
     private void changeDirection(PongLine line)
     {
+        if(line.name.equals("player") && (puck.x > line.x1+10 || puck.x < line.x2-10)){
+            return;
+        }
         DirectionVector lineVector = line.getDirectionVector();
         DirectionVector puckVector = puck.getUnitVector();
-        
+      
         double angleIncidence = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
         //if(angle > Math.PI/2) angle = Math.PI - angle;
         //double rotateAngle = -(Math.PI + 2*angle);
@@ -246,10 +252,19 @@ public class InGame extends JPanel
         
         double xNew = puck.x * Math.cos(rotationAngle) - puck.y * Math.sin(rotationAngle);
         double yNew = puck.x * Math.sin(rotationAngle) + puck.y * Math.cos(rotationAngle);
-
+        
         puck.setUnitVector(xNew, yNew);
         puck.getUnitVector().normalize();
         
+        //////////// Testing another method
+        DirectionVector normal = DirectionVector.getNormal(lineVector);
+        double xReflection = puckVector.getValue(1) - 2 * puckVector.scalar(normal) * normal.getValue(1);
+        double yReflection = puckVector.getValue(2) - 2 * puckVector.scalar(normal) * normal.getValue(2);
+        //puck.setUnitVector(xReflection, yReflection);
+        
+        ///////////
+        
+        // Test-Stuff
         double angleReflection = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
         if(angleReflection > Math.PI/2) {
             angleReflection = Math.PI - angleReflection;

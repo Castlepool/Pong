@@ -75,9 +75,21 @@ public class PlayFieldPanel extends JPanel
         g2d.setColor(Color.ORANGE);
         for(PongLine line : lines){
             g2d.draw(line);
+            // debbuging info
+            if(!line.name.equals("player")){
+                g2d.drawString("Distance from Puck: " + String.valueOf(line.ptLineDist(puck)), (int) (line.x1 + line.x2) / 2 - 80, dim.width / 2 - 80);
+                g2d.drawString("Moves to me: " + line.movesToMe(), (int) (line.x1 + line.x2) / 2 - 80, dim.width / 2 - 120);
+            } else{
+                g2d.drawString("Distance from Puck: " + String.valueOf(line.ptLineDist(puck)), (int) line.x1 - 40, (int) line.y1 - 40);
+                g2d.drawString("Moves to me: " + line.movesToMe(), (int) line.x1 - 40, (int) line.y1 - 20);
+            }
+            
         }
         g2d.fill(new Ellipse2D.Double(puck.x - puck.diameter/2, 
                 puck.y - puck.diameter/2, puck.diameter, puck.diameter));
+        // Arrow for puck
+        g2d.setStroke(new BasicStroke(3));
+        g2d.draw(new Line2D.Double(puck.x, puck.y, (double)puck.x + puck.getUnitVector().getValue(1) * 40.0, (double)puck.y + puck.getUnitVector().getValue(2) * 40.0));
         g2d.setFont(new Font("Monospaced", 0, (int) (dim.width*0.06)));
         int margin = (int) (dim.width*0.1);
         g2d.drawString(String.valueOf(InGame.score), dim.width - margin, margin);

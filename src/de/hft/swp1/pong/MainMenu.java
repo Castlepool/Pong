@@ -67,8 +67,8 @@ public class MainMenu extends JPanel
         btnStartNewGame = new JButton();
         btnExit = new JButton();
         JPanel buttonPanel = new JPanel();
-        width = new JTextField("800", 10);
-        height = new JTextField("600", 10);
+        width = new JTextField("1200", 10);
+        height = new JTextField("800", 10);
         JPanel textFieldPanel = new JPanel();
         
         setLayout(new BorderLayout());

@@ -39,7 +39,7 @@ public class Application
                 int height = screenSize.height * 1 / 6;
                 ROOTFRAME.setSize(width, height);
                 ROOTFRAME.setLocationByPlatform(true);
-                ROOTFRAME.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                ROOTFRAME.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 ROOTFRAME.setName("Pong");
                 ROOTFRAME.setVisible(true);
             }
