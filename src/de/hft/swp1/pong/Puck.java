@@ -12,9 +12,9 @@ public class Puck extends Point2D.Double
     /** Attributes */
 
     /**
-     * diameter the puck optically has
+     * diameter (Durchmesser) the puck optically has
      */
-    public int diameter = 20;
+    public int diameter = 18;
 
     /**
      * timer that moves the puck in it's vectors direction
@@ -27,7 +27,12 @@ public class Puck extends Point2D.Double
      * pucks direction
      */
     private DirectionVector unitVector;
-
+    
+    /**
+     * pucks speed
+     */
+    private int speed = 2;
+    
     /**
      * Operation Puck
      *
@@ -38,10 +43,11 @@ public class Puck extends Point2D.Double
         x = width;
         y = height;
         this.diameter = diameter;
+        // random start-direction (upwards)
         unitVector = new DirectionVector(new double [] {-Math.random(),-Math.random()});
-        //unitVector = new DirectionVector(new double [] {-1.0,-0.55});
         unitVector.normalize();
-        mover = new Timer(14, new ActionListener() {
+        // mover constantly moving puck around
+        mover = new Timer(8, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 move();
@@ -61,7 +67,6 @@ public class Puck extends Point2D.Double
     public void setUnitVector(double x, double y)
     {
         unitVector.setVector(new double [] {x,y}, true);
-        unitVector.normalize();
     }
 
     /**
@@ -91,35 +96,24 @@ public class Puck extends Point2D.Double
     }
 
     /**
-     * highers the timeout of the mover Timer
-     */
-    public void slower()
-    {
-        if(mover.getDelay() < 60){
-            mover.setDelay(mover.getDelay()+1);
-        }
-    }
-
-    /**
-     * lowers the timout of the mover Timer
+     * increase speed of puck
      */
     public void faster()
     {
-//        if(mover.getDelay() > 8){
-//            mover.setDelay(mover.getDelay()-1);
-//        }
+        if(speed < 12){
+            speed += 1;
+        }
     }
 
     /**
      * Operation move.<br />
      * 
-     * move puck once in his direction
+     * move puck once in his direction, at current speed (update points location)
      *
      */
     public void move()
     {
-        // move in direction of unitvector (update points location)
-        x = x + unitVector.getValue(1)*5;
-        y = y + unitVector.getValue(2)*5;
+        x = x + unitVector.getValue(1)*speed;
+        y = y + unitVector.getValue(2)*speed;
     }
 }

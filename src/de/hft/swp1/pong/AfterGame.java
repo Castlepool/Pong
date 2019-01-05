@@ -3,6 +3,7 @@ package de.hft.swp1.pong;
 import static de.hft.swp1.pong.Application.ROOTFRAME;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -33,6 +34,9 @@ public class AfterGame extends JPanel
      */
     private JButton tryAgain;
     
+    /**
+     * table of highscores of this session
+     */
     private static Highscores highscoresScrollPane;
     
     /**
@@ -53,30 +57,32 @@ public class AfterGame extends JPanel
      */
     private void initComponents()
     {
-        saveScore = new JButton();
-        tryAgain = new JButton();
+        // init stuff
+        saveScore = new JButton("Save Score");
+        tryAgain = new JButton("Try Again");
         JPanel buttonPanel = new JPanel();
-        player = new JTextField("Name", 10);
+        player = new JTextField("Your Name", 10);
         score = new JTextField("", 10);
         score.setEditable(false);
+        JButton returnToMenu = new JButton("Return to Main Menu");
         JPanel textFieldPanel = new JPanel();
         
         setLayout(new BorderLayout());
         
+        // set up text fields
+        textFieldPanel.add(new JLabel("Your Name: "));
         textFieldPanel.add(player);
+        textFieldPanel.add(new JLabel("Your Score: "));
         textFieldPanel.add(score);
-        
         add(textFieldPanel, BorderLayout.PAGE_START);
         
-        saveScore.setText("Save Score");
+        // set up buttons
         buttonPanel.add(saveScore);
-        
-        tryAgain.setText("Try Again");
         buttonPanel.add(tryAgain);
-        
+        buttonPanel.add(returnToMenu);
         add(buttonPanel, BorderLayout.PAGE_END);
         
-        // Highscores-Table
+        // show highscore-Table, create new one if none exists
         if(highscoresScrollPane == null){
             highscoresScrollPane = new Highscores();
         }
@@ -91,6 +97,12 @@ public class AfterGame extends JPanel
             Highscore highscore = new Highscore(player.getText(), Integer.valueOf(score.getText()));
             highscoresScrollPane.addHighscore(highscore);
             updateTable();
+        });
+        
+        returnToMenu.addActionListener( e -> {
+            ROOTFRAME.setVisible(false);
+            ROOTFRAME.getContentPane().removeAll();
+            Application.main(null);
         });
     }
     

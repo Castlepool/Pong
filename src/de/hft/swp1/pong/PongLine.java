@@ -6,6 +6,10 @@ public class PongLine extends Line2D.Double
 
 {
     /** Attributes */
+    
+    /**
+     * width of borders (for collision-detection)
+     */
     public final float WIDTH = 20;
 
     /**
@@ -25,11 +29,6 @@ public class PongLine extends Line2D.Double
      */
     private DirectionVector dVector;
 
-    /**
-     * which side of the line (according to the direction Vector) is on the inside
-     * of the playfield
-     */
-    private Side inside;
     
     
     public String name;
@@ -40,10 +39,10 @@ public class PongLine extends Line2D.Double
      * @param startY   -
      * @param destX    -
      * @param destY    -
-     * @param position - depending on the direction vector the inside
+     * @param name - a name for this border
      * @return
      */
-    public PongLine(double startX, double startY, double destX, double destY, Side position, String name)
+    public PongLine(double startX, double startY, double destX, double destY, String name)
     {
         // x1, x2 etc. are fields of Line2D.Double, from which we inherit them
         x1 = startX;
@@ -53,7 +52,6 @@ public class PongLine extends Line2D.Double
         DirectionVector d = new DirectionVector(new double [] {x2-x1, y2-y1});
         d.normalize();
         dVector = d;
-        inside = position;
         this.name = name;
     }
 

@@ -1,5 +1,6 @@
 package de.hft.swp1.pong;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
@@ -9,9 +10,9 @@ public class Player extends PongLine
     /** Attributes */
 
     /**
-     * speed value for the player movage
+     * speed value for the player
      */
-    private final int SPEED = 20;
+    private int speed;
 
     /**
      * Timer that moves the player
@@ -20,6 +21,9 @@ public class Player extends PongLine
 
     /** Associations */
 
+    /**
+     * current direction (left or right) of player
+     */
     private Side direction;
 
     /**
@@ -28,18 +32,21 @@ public class Player extends PongLine
      * @param startY
      * @param destX
      * @param destY
-     * @param position
+     * @param name
      */
-    public Player(double startX, double startY, double destX, double destY, Side position, String name)
+    public Player(double startX, double startY, double destX, double destY, String name)
     {
-        super(startX, startY, destX, destY, position, name);
-        mover = new Timer(30, (ActionEvent e) -> {
-            System.out.println("x1: " + x1 + " SPEED: " + SPEED);
-            if(direction == Side.LEFT && x1 > 40) {
-                this.setLine(x1-SPEED, y1, x2-SPEED, y2);
+        super(startX, startY, destX, destY, name);
+        speed = (int) Math.round( (x1-x2) * 0.2);
+        // mover, will be running while (left/right) key is pressed
+        mover = new Timer(8, (ActionEvent e) -> {
+            int width = Application.ROOTFRAME.getSize().width;
+            // only moves in certain range
+            if(direction == Side.LEFT && x1 > (x1-x2+20) ) {
+                this.setLine(x1-speed, y1, x2-speed, y2);
             }
-            else if(direction == Side.RIGHT && x2 < Application.ROOTFRAME.getSize().width-40) {
-                this.setLine(x1+SPEED, y1, x2+SPEED, y2);
+            else if(direction == Side.RIGHT && x2 < width-(x1-x2+20) ) {
+                this.setLine(x1+speed, y1, x2+speed, y2);
             }
         });
         mover.setInitialDelay(1);
@@ -73,6 +80,14 @@ public class Player extends PongLine
     public boolean isMoving()
     {
         return mover.isRunning();
+    }
+    
+    /**
+     * set speed of player
+     */
+    public void setSpeed(int speed)
+    {
+        this.speed = speed;
     }
     
 }

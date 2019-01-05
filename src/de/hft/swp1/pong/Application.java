@@ -6,6 +6,7 @@ import javax.swing.WindowConstants;
 
 /**
  * Main class to run the Application.
+ * @author Samuel Mergenthaler (template from Lukas Wiest)
  */
 public class Application
 
@@ -33,12 +34,13 @@ public class Application
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+                ROOTFRAME.setTitle("Pong");
                 ROOTFRAME.add(new MainMenu());
                 Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-                int width = screenSize.width * 1 / 6;
-                int height = screenSize.height * 1 / 6;
+                int width = screenSize.width / 6;
+                int height = screenSize.height / 3;
                 ROOTFRAME.setSize(width, height);
-                ROOTFRAME.setLocationByPlatform(true);
+                ROOTFRAME.setLocation(10,10);
                 ROOTFRAME.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 ROOTFRAME.setName("Pong");
                 ROOTFRAME.setVisible(true);

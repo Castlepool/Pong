@@ -5,7 +5,7 @@ public class DirectionVector
 {
     /** Attributes */
     /**
-     * 
+     * vector-coordinates (2D => 2 values)
      */
     private double[] values;
 
@@ -31,10 +31,7 @@ public class DirectionVector
      */
     public DirectionVector(double[] values)
     {
-        this.values = new double [values.length];
-        for(int i = 0; i < values.length; i++){
-            this.values[i] = values[i];
-        }
+        this.values = values;
     }
 
     /**
@@ -99,17 +96,5 @@ public class DirectionVector
         for(int i = 0; i < values.length; i++){
             values[i] = values[i] / length;
         }
-    }
-    
-    /**
-     * Operation getNormal
-     *
-     */
-    public static DirectionVector getNormal(DirectionVector d)
-    {
-        double slopePrevious = d.getValue(2)/d.getValue(1);
-        double slopeNew = -1/(slopePrevious);
-        DirectionVector normal = new DirectionVector(new double [] {1,slopeNew});
-        return normal;
     }
 }

@@ -7,14 +7,11 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Line2D;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
@@ -27,16 +24,15 @@ public class InGame extends JPanel
     /** Attributes */
 
     /**
-     * JPanel for the ingame sidebar holding informations like the current score, if
-     * the game is paused, etc.
+     * current score during ingame
      */
-    private JPanel stats;
-
+    protected static int score = 0;
+    
     /**
-     * textfield showing the current score during ingame
+     * gameOver-flag
      */
-    protected static int score;
-
+    private boolean gameOver = false;
+    
     /**
      * timer to redraw the picture
      */
@@ -53,7 +49,10 @@ public class InGame extends JPanel
      * playfield borders
      */
     private HashSet<PongLine> borders;
-
+    
+    /**
+     * player (special "border", which can be moved)
+     */
     private Player player;
 
     /**
@@ -61,16 +60,20 @@ public class InGame extends JPanel
      */
     private PlayFieldPanel playground;
     
+    /**
+     * KeyboardFocusManager to catch left/right-key
+     */
     KeyboardFocusManager kfm;
     
     /**
      * Operation InGame
      *
-     * @param playFieldSize - the slze we have to create our PlayFieldPanel with.
+     * @param playFieldSize - the size we have to create our PlayFieldPanel with.
      * 
      */
     public InGame(Dimension playFieldSize)
     {
+        // react to keys left/right to move player
         kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         // "Dispatcher" auf Deutsch: Verteiler
         kfm.addKeyEventDispatcher(new KeyEventDispatcher() {
@@ -95,7 +98,7 @@ public class InGame extends JPanel
                 return false;
             }
         });
-        
+        // intialize all necessary stuff and start timers
         initPlayFieldPanel(playFieldSize);
         initComponents();
         refresher.start();
@@ -107,36 +110,37 @@ public class InGame extends JPanel
      *
      * @param playFieldSize - the slze we have to create our PlayFieldPanel with.
      */
-    public void initPlayFieldPanel(Dimension playFieldSize)
+    private void initPlayFieldPanel(Dimension playFieldSize)
     {
         borders = new HashSet<>();
         int width = playFieldSize.width;
         int height = playFieldSize.height;
-        System.out.println(width + " " + height);
-        PongLine bLeft = new PongLine(0, height, width/2, 0, Side.RIGHT, "border_Left");
-        PongLine bRight = new PongLine(width/2, 0, width, height, Side.RIGHT, "border_RIGHT");
-        player = new Player(width/2+40, height-60, width/2-40, height-60, Side.RIGHT, "player");
+        System.out.println("playfield-size: " + width + " " + height);
+        PongLine bLeft = new PongLine(0, height, width/2, 0, "border_Left");
+        PongLine bRight = new PongLine(width/2, 0, width, height, "border_RIGHT");
+        player = new Player(width/2+width/26, height-60, width/2-width/26, height-60, "player");
         borders.add(bLeft);
         borders.add(bRight);
         borders.add(player);
         puck = new Puck(width/2, height/2, (int) (height*0.035));
         playground = new PlayFieldPanel(playFieldSize, borders, puck);
-        score = 0;
     }
 
     /**
      * Operation to init main game components
-     *
      */
     private void initComponents()
     {
+        // add playground to this panel
         add(playground);
-        refresher = new Timer(14, new ActionListener() {
+        // main-refresher for regular collision-check and repainting
+        // (about 60 times a second)
+        refresher = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Update distances to puck
                 borders.forEach( line -> {
-                    double dist = calcDistance(line);
+                    double dist = line.ptLineDist(puck);
                     line.setNewPuckDistance(dist);
                 });
                 // react to collision
@@ -156,48 +160,10 @@ public class InGame extends JPanel
     }
 
     /**
-     * Operation to init statsPanel
-     *
-     */
-    private void initStatsPanel()
-    {
-        throw new UnsupportedOperationException("not yet implemented");
-    }
-
-    /**
-     * Operation to set the borders according the choosen playfieldsize
-     *
-     * @param playFieldSize - playfieldsize
-     */
-    private void setLines(Dimension playFieldSize)
-    {
-        throw new UnsupportedOperationException("not yet implemented");
-    }
-
-    /**
-     * Operation to setup Puck
-     *
-     */
-    private void setPuck()
-    {
-        throw new UnsupportedOperationException("not yet implemented");
-    }
-
-    /**
-     * Operation to movePlayer.<br />
-     * get's called from the Timer that moves the player
-     *
-     * @param movement - value the puck should be moved
-     */
-    private void movePlayer(int movement)
-    {
-        //player.startMove(Side.LEFT);
-    }
-
-    /**
      * Operation checkForCollission.<br />
      * 
      * check for collissions between the puck and each border
+     * change direction if necessary
      *
      */
     private void checkForCollission()
@@ -205,25 +171,12 @@ public class InGame extends JPanel
         for (Iterator<PongLine> iterator = borders.iterator(); iterator.hasNext();) {
             PongLine line = iterator.next();
             if(line.puckDistanceCurrent < line.WIDTH && line.movesToMe()){
-                System.out.println("Moves to me: " + line.movesToMe());
                 changeDirection(line);
                 puck.faster();
-                score++;
+                if(!gameOver) score++;
                 return;
             }
         }
-    }
-
-    /**
-     * Operation calcDistance between a line and the puck
-     *
-     * @param line - border for which we want to check the puck distance
-     * 
-     * @return double calculated distance between puck and line
-     */
-    private double calcDistance(PongLine line)
-    {
-        return line.ptLineDist(puck);
     }
 
     /**
@@ -235,46 +188,47 @@ public class InGame extends JPanel
      */
     private void changeDirection(PongLine line)
     {
+        // if puck missed player => game over
         if(line.name.equals("player") && (puck.x > line.x1+10 || puck.x < line.x2-10)){
+            gameOver = true;
             return;
         }
+        
+        // get Direction Vectors for border and puck
         DirectionVector lineVector = line.getDirectionVector();
         DirectionVector puckVector = puck.getUnitVector();
-      
-        double angleIncidence = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
-        //if(angle > Math.PI/2) angle = Math.PI - angle;
-        //double rotateAngle = -(Math.PI + 2*angle);
-        double rotationAngle = 2*angleIncidence;
+        
+        // angle between line and direction-vector of puck 
+        // (formular is so easy because both vectors are aleady normalized)
+        double angleIncidence = Math.acos(lineVector.scalar(puckVector));
+        // angle to rotate puck-direction (depends on incoming direction)
+        double rotationAngle;
         if(angleIncidence > Math.PI/2) {
             angleIncidence = Math.PI - angleIncidence;
             rotationAngle = -2*angleIncidence;
+        } else {
+            rotationAngle = 2*angleIncidence;
         }
         
-        double xNew = puck.x * Math.cos(rotationAngle) - puck.y * Math.sin(rotationAngle);
-        double yNew = puck.x * Math.sin(rotationAngle) + puck.y * Math.cos(rotationAngle);
+        // new unit-vector-coordinates (using a rotaion matrix, look it up in wikipedia)
+        double xNew = puck.getUnitVector().getValue(1) * Math.cos(rotationAngle) - puck.getUnitVector().getValue(2) * Math.sin(rotationAngle);
+        double yNew = puck.getUnitVector().getValue(1) * Math.sin(rotationAngle) + puck.getUnitVector().getValue(2) * Math.cos(rotationAngle);
         
+        // set new unitvector for puck
         puck.setUnitVector(xNew, yNew);
-        puck.getUnitVector().normalize();
         
-        //////////// Testing another method
-        DirectionVector normal = DirectionVector.getNormal(lineVector);
-        double xReflection = puckVector.getValue(1) - 2 * puckVector.scalar(normal) * normal.getValue(1);
-        double yReflection = puckVector.getValue(2) - 2 * puckVector.scalar(normal) * normal.getValue(2);
-        //puck.setUnitVector(xReflection, yReflection);
-        
-        ///////////
-        
-        // Test-Stuff
-        double angleReflection = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
-        if(angleReflection > Math.PI/2) {
-            angleReflection = Math.PI - angleReflection;
+        // console-output: Only if "More-Info"-Mode is enabled
+        if(MainMenu.showInfo){
+            double angleReflection = Math.acos(lineVector.scalar(puckVector) / (lineVector.length() * puckVector.length()));
+            if(angleReflection > Math.PI/2) {
+                angleReflection = Math.PI - angleReflection;
+            }
+            System.out.println("-------------------------");
+            System.out.println("Line: " + line.name);
+            System.out.println("Time: " + Calendar.getInstance().get(Calendar.SECOND) + ":" + Calendar.getInstance().get(Calendar.MILLISECOND));
+            System.out.println("Angle of incidence (Einfallswinkel): " + String.format( "%.2f", angleIncidence/Math.PI) + "\u03C0" 
+                + "\nAngle of reflection (Ausfallswinkel): " + String.format( "%.2f", angleReflection/Math.PI) + "\u03C0");
         }
-        System.out.println("-------------------------");
-        System.out.println("Line: " + line.name);
-        System.out.println("Time: " + Calendar.getInstance().get(Calendar.SECOND) + ":" + Calendar.getInstance().get(Calendar.MILLISECOND));
-        System.out.println("Angle of incidence (Einfallswinkel): " + String.format( "%.2f", angleIncidence/Math.PI) + "\u03C0" 
-            + "\nAngle of reflection (Ausfallswinkel): " + String.format( "%.2f", angleReflection/Math.PI) + "\u03C0");
-        //puck.setUnitVector(-puck.getUnitVector().getValue(1), -puck.getUnitVector().getValue(2));
     }
 
     /**
@@ -290,8 +244,8 @@ public class InGame extends JPanel
         player.stopMove();
         refresher.stop();
         AfterGame afterGame = new AfterGame(score);
+        score = 0;
         ROOTFRAME.getContentPane().removeAll();
-        //ROOTFRAME.remove(playground);
         ROOTFRAME.add(afterGame);
         ROOTFRAME.revalidate();
         ROOTFRAME.repaint();

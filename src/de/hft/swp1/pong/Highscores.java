@@ -22,7 +22,7 @@ public class Highscores extends JScrollPane
     private final static Comparator<Highscore> COMP_HIGHSCORES = new Comparator<Highscore>() {
         @Override
         public int compare(Highscore h1, Highscore h2) {
-            int scoreDifference = h1.score - h2.score;
+            int scoreDifference = h2.score - h1.score;
             if(scoreDifference == 0){
                 return h1.playerName.compareTo(h2.playerName);
             }
@@ -56,7 +56,7 @@ public class Highscores extends JScrollPane
     public void addHighscore(Highscore playedHighscore){
         highscores.add(playedHighscore);
         highscores.sort(COMP_HIGHSCORES);
-        highscoreTable.setModel( new DefaultTableModel(new String [] {"Score","Name"}, highscores.size()));
+        highscoreTable.setModel( new DefaultTableModel(new String [] {"Score","Player-Name"}, highscores.size()));
         for(int i = 0; i < highscores.size(); i++){
             highscoreTable.getModel().setValueAt(highscores.get(i).score, i, 0);
             highscoreTable.getModel().setValueAt(highscores.get(i).playerName, i, 1);
