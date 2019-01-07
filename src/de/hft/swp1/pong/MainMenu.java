@@ -84,6 +84,10 @@ public class MainMenu extends JPanel
         height = new JTextField("800", 10);
         dropdownColors = new JComboBox(new String [] {"Black", "Grey"});
         checkBoxShowInfo = new JCheckBox("show additional ingame-info", false);
+        JLabel emptyText1 = new JLabel("\n");
+        JLabel emptyText2 = new JLabel("\n");
+        JLabel emptyText3 = new JLabel("\n");
+        JLabel infoText = new JLabel("Info: Cancel ingame with \"Backspace\".");
         JPanel optionsPanel = new JPanel();
         
         setLayout(new BorderLayout());
@@ -100,11 +104,15 @@ public class MainMenu extends JPanel
         helperPanel2.add(new JLabel("Height: "));
         helperPanel2.add(height);
         optionsPanel.add(helperPanel2);
+        optionsPanel.add(emptyText1);
         optionsPanel.add(new JLabel("Background-Color:"));
         JPanel helperPanel3 = new JPanel();
         helperPanel3.add(dropdownColors);
         optionsPanel.add(helperPanel3);
+        optionsPanel.add(emptyText2);
         optionsPanel.add(checkBoxShowInfo);
+        optionsPanel.add(emptyText3);
+        optionsPanel.add(infoText);
         add(optionsPanel, BorderLayout.CENTER);
         
         // set up buttons
@@ -126,6 +134,12 @@ public class MainMenu extends JPanel
             switch(dropdownColors.getSelectedItem().toString()){
                 case "Grey":
                     PlayFieldPanel.backgroundColor = Color.DARK_GRAY;
+                    break;
+                case "Black":
+                    PlayFieldPanel.backgroundColor = Color.BLACK;
+                    break;
+                default:
+                    break;
             }
             showInfo = checkBoxShowInfo.isSelected();
             startNewGame(dim);

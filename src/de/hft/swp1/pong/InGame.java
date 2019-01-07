@@ -87,10 +87,12 @@ public class InGame extends JPanel
                             player.startMove(Side.LEFT);
                         } else if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_RIGHT, 0))){
                             player.startMove(Side.RIGHT);
+                        } else if(ks.equals(KeyStroke.getAWTKeyStroke(KeyEvent.VK_BACK_SPACE, 0))){
+                            exitIngame();
+                            return true;
                         }
                         return true;
-                    }
-                    if(type == KeyEvent.KEY_RELEASED) {
+                    } else if(type == KeyEvent.KEY_RELEASED) {
                         player.stopMove();
                         return true;
                     } 
@@ -189,7 +191,7 @@ public class InGame extends JPanel
     private void changeDirection(PongLine line)
     {
         // if puck missed player => game over
-        if(line.name.equals("player") && (puck.x > line.x1+10 || puck.x < line.x2-10)){
+        if(line.name.equals("player") && (puck.x > line.x1+20 || puck.x < line.x2-20)){
             gameOver = true;
             return;
         }

@@ -37,8 +37,8 @@ public class Application
                 ROOTFRAME.setTitle("Pong");
                 ROOTFRAME.add(new MainMenu());
                 Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-                int width = screenSize.width / 6;
-                int height = screenSize.height / 3;
+                int width = (int) (screenSize.width * 0.2);
+                int height = (int) (screenSize.height * 0.4);
                 ROOTFRAME.setSize(width, height);
                 ROOTFRAME.setLocation(10,10);
                 ROOTFRAME.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
