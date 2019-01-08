@@ -37,9 +37,9 @@ public class Player extends PongLine
     public Player(double startX, double startY, double destX, double destY, String name)
     {
         super(startX, startY, destX, destY, name);
-        speed = (int) Math.round( (x1-x2) * 0.2);
+        speed = (int) Math.round( (x1-x2) * 0.15);
         // mover, will be running while (left/right) key is pressed
-        mover = new Timer(8, (ActionEvent e) -> {
+        mover = new Timer(10, (ActionEvent e) -> {
             int width = Application.ROOTFRAME.getSize().width;
             // only moves in certain range
             if(direction == Side.LEFT && x1 > (x1-x2+20) ) {
