@@ -100,7 +100,7 @@ public class Puck extends Point2D.Double
      */
     public void faster()
     {
-        if(speed < 8){
+        if(speed < 9){
             speed += 1;
         }
     }
